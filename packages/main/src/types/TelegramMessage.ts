@@ -3,6 +3,7 @@ import { TelegramDocument } from './TelegramDocument.js';
 import TelegramFrom from './TelegramFrom.js';
 import TelegramMessageEntity from './TelegramMessageEntity.js';
 import TelegramPhotoSize from './TelegramPhotoSize.js';
+import TelegramPoll from './TelegramPoll.js';
 import TelegramUser from './TelegramUser.js';
 
 interface TelegramMessage {
@@ -38,7 +39,7 @@ interface TelegramMessage {
 	caption_entities?: TelegramMessageEntity[];
 	// contact?: TelegramContact;
 	// dice?: TelegramDice;
-	// poll?: TelegramPoll;
+	poll?: TelegramPoll;
 	// venue?: TelegramVenue;
 	// location?: TelegramLocation;
 	new_chat_members?: TelegramUser[];

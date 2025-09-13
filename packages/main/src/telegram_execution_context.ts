@@ -45,6 +45,10 @@ export default class TelegramExecutionContext {
       return 'callback';
     } else if (this.update.business_message) {
       return 'business_message';
+    } else if (this.update.poll) {
+      return 'poll';
+    } else if (this.update.poll_answer) {
+      return 'poll_answer';
     }
     return '';
   }
@@ -218,4 +222,60 @@ export default class TelegramExecutionContext {
         return null;
     }
   }
+
+  async replyPoll(
+		question: string,
+		options: string[],
+		pollOptions: Record<string, number | string | boolean> = {},
+	) {
+		switch (this.update_type) {
+			case 'message':
+			case 'photo':
+			case 'document':
+				return await this.api.sendPoll(this.bot.api.toString(), {
+					...pollOptions,
+					chat_id: this.getChatId(),
+					reply_to_message_id: this.getMessageId(),
+					question,
+					options,
+				});
+			case 'business_message':
+				return await this.api.sendPoll(this.bot.api.toString(), {
+					...pollOptions,
+					chat_id: this.getChatId(),
+					business_connection_id: this.update.business_message?.business_connection_id.toString() ?? '',
+					question,
+					options,
+				});
+			default:
+				return null;
+		}
+	}
+
+	/**
+	 * Stop a poll in the current chat
+	 * @param message_id - ID of the original poll message
+	 * @param reply_markup - optional new inline keyboard
+	 */
+	async stopPoll(message_id: number, reply_markup?: object) {
+		switch (this.update_type) {
+			case 'message':
+			case 'photo':
+			case 'document':
+				return await this.api.stopPoll(this.bot.api.toString(), {
+					chat_id: this.getChatId(),
+					message_id,
+					reply_markup,
+				});
+			case 'business_message':
+				return await this.api.stopPoll(this.bot.api.toString(), {
+					chat_id: this.getChatId(),
+					business_connection_id: this.update.business_message?.business_connection_id.toString() ?? '',
+					message_id,
+					reply_markup,
+				});
+			default:
+				return null;
+		}
+	}
 }

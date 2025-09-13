@@ -3,6 +3,8 @@ import TelegramMessage from './TelegramMessage.js';
 import PartialTelegramUpdate from './PartialTelegramUpdate.js';
 import TelegramCallbackQuery from './TelegramCallbackQuery.js';
 import TelegramBusinessMessage from './TelegramBusinessMessage.js';
+import TelegramPoll from './TelegramPoll.js';
+import TelegramPollAnswer from './TelegramPollAnswer.js';
 
 export default class TelegramUpdate {
 	update_id: number;
@@ -16,8 +18,8 @@ export default class TelegramUpdate {
 	business_message?: TelegramBusinessMessage;
 	// shipping_query?: TelegramShippingQuery;
 	// pre_checkout_query?: TelegramPreCheckoutQuery;
-	// poll?: TelegramPoll;
-	// poll_answer?: TelegramPollAnswer;
+	poll?: TelegramPoll;
+	poll_answer?: TelegramPollAnswer;
 	// my_chat_member?: TelegramChatMemberUpdated;
 	// chat_member?: TelegramChatMemberUpdated;
 	// chat_join_request: TelegramChatJoinRequest;
@@ -33,8 +35,8 @@ export default class TelegramUpdate {
 		// callback_query = update.callback_query;
 		// shipping_query = update.shipping_query;
 		// pre_checkout_query = update.pre_checkout_query;
-		// poll = update.poll;
-		// poll_answer = update.poll_answer;
+		this.poll = update.poll;
+		this.poll_answer = update.poll_answer;
 		// my_chat_member = update.my_chat_member;
 		// chat_member = update.chat_member;
 		// chat_join_request = update.chat_join_request;
