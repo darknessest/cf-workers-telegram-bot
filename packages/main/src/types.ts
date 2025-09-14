@@ -21,6 +21,7 @@ import ChatPermissions from './types/ChatPermissions.js';
 import TelegramPoll from './types/TelegramPoll.js';
 import TelegramPollAnswer from './types/TelegramPollAnswer.js';
 import TelegramPollOption from './types/TelegramPollOption.js';
+import TelegramChatMember from './types/TelegramChatMember.js';
 
 export default TelegramBot;
 export {
@@ -47,4 +48,5 @@ export {
 	TelegramPoll,
 	TelegramPollAnswer,
 	TelegramPollOption,
+	TelegramChatMember,
 };

@@ -288,6 +288,47 @@ export default class TelegramApi {
 		const url = this.getApiUrl(botApi, 'editMessageText', data);
 		return await fetch(url);
 	}
+
+	/**
+	 * Get basic information about the bot
+	 * @param botApi - full URL to the telegram API without slug
+	 */
+	async getMe(botApi: string): Promise<Response> {
+		const url = this.getApiUrl(botApi, 'getMe', {});
+		return await fetch(url);
+	}
+
+	/**
+	 * Get the number of members in a chat
+	 * @param botApi - full URL to the telegram API without slug
+	 * @param data - expects chat_id
+	 */
+	async getChatMemberCount(botApi: string, data: { chat_id: number | string }): Promise<Response> {
+		const url = this.getApiUrl(botApi, 'getChatMemberCount', data);
+		return await fetch(url);
+	}
+
+	/**
+	 * Get a list of administrators in a chat
+	 * @param botApi - full URL to the telegram API without slug
+	 * @param data - expects chat_id
+	 */
+	async getChatAdministrators(botApi: string, data: { chat_id: number | string }): Promise<Response> {
+		const url = this.getApiUrl(botApi, 'getChatAdministrators', data);
+		return await fetch(url);
+	}
+
+	/**
+	 * Get information about a member of a chat
+	 * @param botApi - full URL to the telegram API without slug
+	 * @param data - expects chat_id and user_id
+	 */
+	async getChatMember(
+		botApi: string,
+		data: { chat_id: number | string; user_id: number | string },
+	): Promise<Response> {
+		const url = this.getApiUrl(botApi, 'getChatMember', data);
+		return await fetch(url);
+	}
 }
 
- 

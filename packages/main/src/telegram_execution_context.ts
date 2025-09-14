@@ -4,6 +4,7 @@ import TelegramInlineQueryResultArticle from './types/TelegramInlineQueryResultA
 import TelegramInlineQueryResultPhoto from './types/TelegramInlineQueryResultPhoto.js';
 import TelegramUpdate from './types/TelegramUpdate.js';
 import TelegramInlineQueryResultVideo from './types/TelegramInlineQueryResultVideo.js';
+import type TelegramChatMember from './types/TelegramChatMember.js';
 
 /** Class representing the context of execution */
 export default class TelegramExecutionContext {
@@ -72,6 +73,22 @@ export default class TelegramExecutionContext {
    */
   private getMessageId(): string {
     return this.update.message?.message_id.toString() ?? '';
+  }
+
+  /**
+   * Resolve chat id from any supported update kind (message, business_message, callback)
+   */
+  private getAnyChatId(): string {
+    if (this.update.message?.chat.id) {
+      return this.update.message.chat.id.toString();
+    }
+    if (this.update.business_message?.chat.id) {
+      return this.update.business_message.chat.id.toString();
+    }
+    if (this.update.callback_query?.message?.chat?.id) {
+      return this.update.callback_query.message.chat.id.toString();
+    }
+    return '';
   }
 
   /**
@@ -224,58 +241,92 @@ export default class TelegramExecutionContext {
   }
 
   async replyPoll(
-		question: string,
-		options: string[],
-		pollOptions: Record<string, number | string | boolean> = {},
-	) {
-		switch (this.update_type) {
-			case 'message':
-			case 'photo':
-			case 'document':
-				return await this.api.sendPoll(this.bot.api.toString(), {
-					...pollOptions,
-					chat_id: this.getChatId(),
-					reply_to_message_id: this.getMessageId(),
-					question,
-					options,
-				});
-			case 'business_message':
-				return await this.api.sendPoll(this.bot.api.toString(), {
-					...pollOptions,
-					chat_id: this.getChatId(),
-					business_connection_id: this.update.business_message?.business_connection_id.toString() ?? '',
-					question,
-					options,
-				});
-			default:
-				return null;
-		}
-	}
+    question: string,
+    options: string[],
+    pollOptions: Record<string, number | string | boolean> = {},
+  ) {
+    switch (this.update_type) {
+      case 'message':
+      case 'photo':
+      case 'document':
+        return await this.api.sendPoll(this.bot.api.toString(), {
+          ...pollOptions,
+          chat_id: this.getChatId(),
+          reply_to_message_id: this.getMessageId(),
+          question,
+          options,
+        });
+      case 'business_message':
+        return await this.api.sendPoll(this.bot.api.toString(), {
+          ...pollOptions,
+          chat_id: this.getChatId(),
+          business_connection_id: this.update.business_message?.business_connection_id.toString() ?? '',
+          question,
+          options,
+        });
+      default:
+        return null;
+    }
+  }
 
-	/**
-	 * Stop a poll in the current chat
-	 * @param message_id - ID of the original poll message
-	 * @param reply_markup - optional new inline keyboard
-	 */
-	async stopPoll(message_id: number, reply_markup?: object) {
-		switch (this.update_type) {
-			case 'message':
-			case 'photo':
-			case 'document':
-				return await this.api.stopPoll(this.bot.api.toString(), {
-					chat_id: this.getChatId(),
-					message_id,
-					reply_markup,
-				});
-			case 'business_message':
-				return await this.api.stopPoll(this.bot.api.toString(), {
-					chat_id: this.getChatId(),
-					business_connection_id: this.update.business_message?.business_connection_id.toString() ?? '',
-					message_id,
-					reply_markup,
-				});
-			default:
-				return null;
-		}
-	}
+  /**
+   * Stop a poll in the current chat
+   * @param message_id - ID of the original poll message
+   * @param reply_markup - optional new inline keyboard
+   */
+  async stopPoll(message_id: number, reply_markup?: object) {
+    switch (this.update_type) {
+      case 'message':
+      case 'photo':
+      case 'document':
+        return await this.api.stopPoll(this.bot.api.toString(), {
+          chat_id: this.getChatId(),
+          message_id,
+          reply_markup,
+        });
+      case 'business_message':
+        return await this.api.stopPoll(this.bot.api.toString(), {
+          chat_id: this.getChatId(),
+          business_connection_id: this.update.business_message?.business_connection_id.toString() ?? '',
+          message_id,
+          reply_markup,
+        });
+      default:
+        return null;
+    }
+  }
+
+  /**
+   * Get chat member count for the current chat
+   */
+  async getChatMemberCount(): Promise<number | null> {
+    const chat_id = this.getAnyChatId();
+    if (!chat_id) return null;
+    const response = await this.api.getChatMemberCount(this.bot.api.toString(), { chat_id });
+    if (!response.ok) return null;
+    const json: { ok: boolean; result?: number } = await response.json();
+    return json.ok && typeof json.result === 'number' ? json.result : null;
+  }
+
+  /**
+   * Get list of chat administrators in the current chat
+   */
+  async getChatAdministrators(): Promise<TelegramChatMember[] | null> {
+    const chat_id = this.getAnyChatId();
+    if (!chat_id) return null;
+    const response = await this.api.getChatAdministrators(this.bot.api.toString(), { chat_id });
+    if (!response.ok) return null;
+    const json: { ok: boolean; result?: TelegramChatMember[] } = await response.json();
+    return json.ok && Array.isArray(json.result) ? json.result : null;
+  }
+
+  /**
+   * Get number of users in chat excluding the bot itself.
+   * Assumes the bot is a member if we are handling an update from this chat.
+   */
+  async getUserCountExcludingBot(): Promise<number | null> {
+    const count = await this.getChatMemberCount();
+    if (count == null) return null;
+    return Math.max(0, count - 1);
+  }
 }
