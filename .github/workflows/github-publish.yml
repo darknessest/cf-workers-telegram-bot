@@ -3,6 +3,7 @@ name: publish github package
 on:
   release:
     types: [created]
+  workflow_dispatch:
 
 jobs:
   publish-github:
@@ -17,6 +18,8 @@ jobs:
         with:
           node-version: latest
           registry-url: https://npm.pkg.github.com/
+          scope: '@darknessest'
+          always-auth: true
       - id: node-modules-cache
         uses: actions/cache@v4
         with:
