@@ -1,4 +1,6 @@
 name: publish npm package
+permissions:
+  contents: read
 
 on:
   release:
