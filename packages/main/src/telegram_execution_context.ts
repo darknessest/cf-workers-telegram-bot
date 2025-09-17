@@ -85,7 +85,7 @@ export default class TelegramExecutionContext {
     if (this.update.business_message?.chat.id) {
       return this.update.business_message.chat.id.toString();
     }
-    if (this.update.callback_query?.message?.chat?.id) {
+    if (this.update.callback_query?.message.chat.id) {
       return this.update.callback_query.message.chat.id.toString();
     }
     return '';

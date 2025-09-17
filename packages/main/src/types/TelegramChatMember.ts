@@ -1,8 +1,10 @@
 import TelegramUser from './TelegramUser.js';
 
+type TelegramChatMemberStatus = 'creator' | 'administrator' | 'member' | 'restricted' | 'left' | 'kicked' | (string & {});
+
 interface TelegramChatMember {
-    user: TelegramUser;
-    status: 'creator' | 'administrator' | 'member' | 'restricted' | 'left' | 'kicked' | string;
+	user: TelegramUser;
+	status: TelegramChatMemberStatus;
 
     // Administrator fields (optional)
     can_be_edited?: boolean;
