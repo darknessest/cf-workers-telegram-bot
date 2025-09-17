@@ -1,5 +1,5 @@
 {
-	"name": "@codebam/cf-workers-telegram-bot",
+	"name": "@darknessest/cf-workers-telegram-bot",
 	"version": "9.1.4",
 	"description": "serverless telegram bot on cf workers",
 	"main": "./dist/main.js",
@@ -28,7 +28,10 @@
 	"license": "Apache-2.0",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/codebam/cf-workers-telegram-bot.git"
+		"url": "https://github.com/darknessest/cf-workers-telegram-bot.git"
+	},
+	"publishConfig": {
+		"registry": "https://npm.pkg.github.com"
 	},
 	"devDependencies": {
 		"@cloudflare/workers-types": "^4.20250628.0",

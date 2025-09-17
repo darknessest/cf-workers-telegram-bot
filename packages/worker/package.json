@@ -14,7 +14,7 @@
 	"author": "codebam",
 	"license": "Apache-2.0",
 	"dependencies": {
-		"@codebam/cf-workers-telegram-bot": "file:../main",
+		"@darknessest/cf-workers-telegram-bot": "file:../main",
 		"marked": "^16.0.0"
 	},
 	"devDependencies": {
