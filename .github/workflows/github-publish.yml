@@ -2,7 +2,7 @@ name: publish github package
 
 on:
   release:
-    types: [created]
+    types: [created, published]
   workflow_dispatch:
 
 jobs:
