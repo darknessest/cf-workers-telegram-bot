@@ -8,15 +8,17 @@ on:
 
 jobs:
   npm-package:
+    # Do not run npm (registry.npmjs.org) publish on the fork
+    if: ${{ github.repository_owner == 'codebam' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: latest
           registry-url: https://registry.npmjs.org/
       - id: node-modules-cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             node_modules
